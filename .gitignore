@@ -1,2 +1,2 @@
-mynextband.cfg
-
+*.cfg
+!template.cfg
