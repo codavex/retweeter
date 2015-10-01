@@ -1,7 +1,5 @@
 #!/usr/bin/python
 
-# @my_next_band
- 
 import tweepy, time, sys
 import ConfigParser
 
