@@ -20,6 +20,8 @@ ACCESS_SECRET = Config.get("Authentication", "ACCESS_SECRET")
 
 THROTTLE = Config.getint("Settings", "THROTTLE")
 
+SEARCH_TERMS = Config.get("Search", "SEARCH_TERMS")
+
 # authenticate
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 auth.set_access_token(ACCESS_KEY, ACCESS_SECRET)
@@ -29,7 +31,10 @@ api = tweepy.API(auth)
 most_recent_tweet = api.user_timeline(count = 1)[0]
 
 # get tweets 
-results = reversed(api.search(q="\"my next band name\"",since_id=most_recent_tweet.id))
+results = []
+
+for search_string in  SEARCH_TERMS.split(","):
+  results += reversed(api.search(q="\""+search_string+"\"",since_id=most_recent_tweet.id))
 
 # retweet what we've found.
 for result in results:
