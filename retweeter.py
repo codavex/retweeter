@@ -3,6 +3,12 @@
 import tweepy, time, sys
 import ConfigParser
 
+def blacklist_match(text, blacklist):
+  for blacklist_item in blacklist.split(","):
+    if blacklist_item in text:
+      return True
+  return False
+
 if len(sys.argv) != 2:
   print "Need a config file"
   exit(0)
@@ -22,6 +28,7 @@ RESTRICT_USERS = Config.getint("Settings", "RESTRICT_USERS")
 DEBUG = Config.getboolean("Settings", "DEBUG")
 
 SEARCH_TERMS = Config.get("Search", "SEARCH_TERMS")
+BLACKLIST_TERMS = Config.get("Search", "BLACKLIST_TERMS")
 
 # authenticate
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
@@ -67,6 +74,8 @@ for result in results:
     pass
   elif (RESTRICT_USERS and result.author.screen_name in retweeted_authors):
     # if users has been retweeted recently, ignore
+    pass
+  elif (blacklist_match(result.text, BLACKLIST_TERMS)):
     pass
   else:
     api.retweet(result.id)
