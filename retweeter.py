@@ -9,6 +9,12 @@ def blacklist_match(text, blacklist):
       return True
   return False
 
+def already_retweeted(whoami, retweets):
+  for retweet in retweets:
+    if whoami.screen_name in retweet.user.screen_name:
+      return True
+  return False
+
 if len(sys.argv) != 2:
   print "Need a config file"
   exit(0)
@@ -76,6 +82,9 @@ for result in results:
     # if users has been retweeted recently, ignore
     pass
   elif (blacklist_match(result.text, BLACKLIST_TERMS)):
+    pass
+  elif hasattr (result, 'retweeted_status') and already_retweeted(whoami, api.retweets( result.retweeted_status.id) ):
+    # if I've already retweeted, ignore
     pass
   else:
     api.retweet(result.id)
