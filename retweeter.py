@@ -59,7 +59,7 @@ if (DEBUG):
 results = []
 
 for search_string in  SEARCH_TERMS.split(","):
-  results += reversed(api.search(q="\""+search_string+"\"",since_id=most_recent_tweet_id))
+  results += reversed(api.search(q="\""+search_string+"\"",since_id=most_recent_tweet_id,result_type='recent'))
 
 # if we've had multiple search terms, sort to get back in time order
 results.sort(key=lambda result: result.id)
