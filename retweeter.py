@@ -32,6 +32,7 @@ THROTTLE = Config.getint("Settings", "THROTTLE")
 EXCLUDE_MENTIONS = Config.getboolean("Settings", "EXCLUDE_MENTIONS")
 RESTRICT_USERS = Config.getint("Settings", "RESTRICT_USERS")
 DEBUG = Config.getboolean("Settings", "DEBUG")
+TRIAL_RUN = Config.getboolean("Settings", "TRIAL_RUN")
 
 SEARCH_TERMS = Config.get("Search", "SEARCH_TERMS")
 BLACKLIST_TERMS = Config.get("Search", "BLACKLIST_TERMS")
@@ -75,7 +76,10 @@ for result in results:
   if (DEBUG):
     print "%s - %s: %s" % ( result.id, result.author.screen_name, result.text )
 
-  if (EXCLUDE_MENTIONS and whoami.screen_name in result.text):
+  if (TRIAL_RUN):
+    # do nothing
+    pass
+  elif (EXCLUDE_MENTIONS and whoami.screen_name in result.text):
     # do nothing if we're excluding mentions and mentioned
     pass
   elif (RESTRICT_USERS and result.author.screen_name in retweeted_authors):
