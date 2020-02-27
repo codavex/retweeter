@@ -1,29 +1,14 @@
 #!/usr/bin/python
 
-import logging
+import logging, logging.config, logging.handlers
 import tweepy, time, sys
 import ConfigParser
-
-from logging.handlers import RotatingFileHandler
 
 def setupApi(consumerKey, consumerSecret, accessKey, accessSecret):
   auth = tweepy.OAuthHandler(consumerKey, consumerSecret)
   auth.set_access_token(accessKey, accessSecret)
   api = tweepy.API(auth)
   return api
-
-def setupLogging(logfile):
-  logging.basicConfig(level=logging.DEBUG)
-  logger = logging.getLogger(__name__)
-
-  handler = RotatingFileHandler(logfile, maxBytes=100000, backupCount=8)
-  handler.setLevel(logging.DEBUG)
-
-  formatter = logging.Formatter("%(asctime)s - %(filename)s:%(lineno)d - %(levelname)s - %(message)s")
-  handler.setFormatter(formatter)
-
-  logger.addHandler(handler)
-  return logger
 
 def blacklist_match(text, blacklist):
   for blacklist_item in blacklist.split(","):
@@ -54,13 +39,14 @@ THROTTLE = Config.getint("Settings", "THROTTLE")
 EXCLUDE_MENTIONS = Config.getboolean("Settings", "EXCLUDE_MENTIONS")
 RESTRICT_USERS = Config.getint("Settings", "RESTRICT_USERS")
 TRIAL_RUN = Config.getboolean("Settings", "TRIAL_RUN")
-LOGFILE = Config.get("Settings", "LOGFILE")
+LOG_CONFIG = Config.get("Settings", "LOG_CONFIG")
 
 SEARCH_TERMS = Config.get("Search", "SEARCH_TERMS")
 BLACKLIST_TERMS = Config.get("Search", "BLACKLIST_TERMS")
 
 # set up logging
-logger = setupLogging(LOGFILE)
+logging.config.fileConfig(LOG_CONFIG)
+logger = logging.getLogger(__name__)
 
 # authenticate and setup tweepy
 api = setupApi(CONSUMER_KEY, CONSUMER_SECRET, ACCESS_KEY, ACCESS_SECRET)
