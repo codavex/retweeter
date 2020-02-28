@@ -98,6 +98,7 @@ for result in results:
     logger.info("User retweeted recently - not retweeting")
     pass
   elif (blacklist_match(result.text, BLACKLIST_TERMS)):
+    # tweet matches blacklisted terms, ignore
     logger.info("Blacklist hit - not retweeting")
     pass
   elif hasattr (result, 'retweeted_status') and already_retweeted(whoami, api.retweets( result.retweeted_status.id) ):
