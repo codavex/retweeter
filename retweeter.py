@@ -79,28 +79,30 @@ for search_string in  SEARCH_TERMS.split(","):
 # if we've had multiple search terms, sort to get back in time order
 results.sort(key=lambda result: result.id)
 
+logger.info("Found %d tweets", len(results))
+
 # retweet what we've found.
 for result in results:
   logger.info("Tweet under consideration: %s - %s", result.author.screen_name, result.text )
 
   if (TRIAL_RUN):
     # do nothing
-    logger.debug("TRIAL RUN - not retweeting")
+    logger.info("TRIAL RUN - not retweeting")
     pass
   elif (EXCLUDE_MENTIONS and whoami.screen_name in result.text):
     # do nothing if we're excluding mentions and mentioned
-    logger.debug("Mentioned in tweet - not retweeting")
+    logger.info("Mentioned in tweet - not retweeting")
     pass
   elif (RESTRICT_USERS and result.author.screen_name in retweeted_authors):
     # if users has been retweeted recently, ignore
-    logger.debug("User retweeted recently - not retweeting")
+    logger.info("User retweeted recently - not retweeting")
     pass
   elif (blacklist_match(result.text, BLACKLIST_TERMS)):
-    logger.debug("Blacklist hit - not retweeting")
+    logger.info("Blacklist hit - not retweeting")
     pass
   elif hasattr (result, 'retweeted_status') and already_retweeted(whoami, api.retweets( result.retweeted_status.id) ):
     # if I've already retweeted, ignore
-    logger.debug("Already retweeted - not retweeting")
+    logger.info("Already retweeted - not retweeting")
     pass
   else:
     logger.info("Retweeting")
