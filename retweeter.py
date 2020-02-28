@@ -57,7 +57,7 @@ logger.info("whoami: %s", whoami.screen_name)
 
 # get id of most recent tweet
 most_recent_tweet = api.user_timeline(count = 1)[0]
-logger.debug("Most recent tweet: %s - %s", most_recent_tweet.author.screen_name, most_recent_tweet.text )
+logger.debug("Most recent tweet: %s", most_recent_tweet.text )
 
 # get last X tweets authors
 retweeted_authors = []
