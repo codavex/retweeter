@@ -108,5 +108,6 @@ for result in results:
   else:
     logger.info("Retweeting")
     api.retweet(result.id)
+    retweeted_authors.append(result.author.screen_name)
     time.sleep(THROTTLE)
 
