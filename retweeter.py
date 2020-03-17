@@ -16,10 +16,11 @@ def blacklist_match(text, blacklist):
       return True
   return False
 
-def already_retweeted(whoami, retweets):
-  for retweet in retweets:
-    if whoami.screen_name in retweet.user.screen_name:
-      return True
+def already_retweeted(tweet):
+  if hasattr (tweet, 'retweeted_status'):
+    for retweet in api.retweets( tweet.retweeted_status.id):
+      if whoami.screen_name in retweet.user.screen_name:
+        return True
   return False
 
 if len(sys.argv) != 2:
@@ -101,13 +102,16 @@ for result in results:
     # tweet matches blacklisted terms, ignore
     logger.info("Blacklist hit - not retweeting")
     pass
-  elif hasattr (result, 'retweeted_status') and already_retweeted(whoami, api.retweets( result.retweeted_status.id) ):
+  elif already_retweeted(result):
     # if I've already retweeted, ignore
     logger.info("Already retweeted - not retweeting")
     pass
   else:
     logger.info("Retweeting")
-    api.retweet(result.id)
-    retweeted_authors.append(result.author.screen_name)
-    time.sleep(THROTTLE)
+    try:
+      api.retweet(result.id)
+      retweeted_authors.append(result.author.screen_name)
+      time.sleep(THROTTLE)
+    except tweepy.TweepError, e:
+      logger.error('Error retweeting: '+ str(e))
 
