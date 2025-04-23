@@ -35,6 +35,12 @@ if len(sys.argv) != 2:
 Config = configparser.ConfigParser()
 Config.read(sys.argv[1])
 
+SEARCH_TERMS = Config.get("Search", "SEARCH_TERMS")
+BLACKLIST_TERMS = Config.get("Search", "BLACKLIST_TERMS")
+
+BASE_CONFIG = Config.get("Settings", "BASE_CONFIG")
+Config.read(BASE_CONFIG)
+
 # get the authentication information from the ini file
 BEARER_TOKEN = Config.get("Authentication", "BEARER_TOKEN")
 
@@ -44,9 +50,6 @@ EXCLUDE_MENTIONS = Config.getboolean("Settings", "EXCLUDE_MENTIONS")
 RESTRICT_USERS = Config.getint("Settings", "RESTRICT_USERS")
 TRIAL_RUN = Config.getboolean("Settings", "TRIAL_RUN")
 LOG_CONFIG = Config.get("Settings", "LOG_CONFIG")
-
-SEARCH_TERMS = Config.get("Search", "SEARCH_TERMS")
-BLACKLIST_TERMS = Config.get("Search", "BLACKLIST_TERMS")
 
 # set up logging
 logging.config.fileConfig(LOG_CONFIG)
@@ -109,12 +112,9 @@ logger.debug("retweeted_authors: %s", retweeted_authors)
 # get tweets
 results = []
 
-for search_string in SEARCH_TERMS.split(","):
-    print(search_string)
-
 results += reversed(
     client.search_recent_tweets(
-        query="\"is my next band name\"",
+        query=SEARCH_TERM,
         # tweet_fields=['author_id', 'entities', 'referenced_tweets'],
         # user_fields=['username'],
         user_fields=['username', 'public_metrics', 'description', 'location'],

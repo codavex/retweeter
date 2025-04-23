@@ -1,2 +1,3 @@
 *.cfg
-!template.cfg
+!template_base.cfg
+!template_search.cfg
