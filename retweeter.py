@@ -51,9 +51,7 @@ Config.read(BASE_CONFIG)
 BEARER_TOKEN = Config.get("Authentication", "BEARER_TOKEN")
 
 USERNAME = Config.get("Settings", "USERNAME")
-THROTTLE = Config.getint("Settings", "THROTTLE")
 EXCLUDE_MENTIONS = Config.getboolean("Settings", "EXCLUDE_MENTIONS")
-RESTRICT_USERS = Config.getint("Settings", "RESTRICT_USERS")
 TRIAL_RUN = Config.getboolean("Settings", "TRIAL_RUN")
 LOG_CONFIG = Config.get("Settings", "LOG_CONFIG")
 
@@ -75,35 +73,6 @@ except tweepy.errors.TweepyException as e:
     sys.exit(-1)
 
 my_id = response.data.id
-
-# get more recent tweets by USERNAME
-try:
-    response = client.get_users_tweets(
-        id=my_id,
-        expansions=['author_id', 'entities.mentions.username'],
-        user_fields=['username'],
-        tweet_fields=['author_id', 'created_at', 'referenced_tweets', 'text'],
-        max_results=RESTRICT_USERS,
-        )
-except tweepy.errors.TweepyException as e:
-    logger.error('Error getting recent retweets %s', e)
-    sys.exit(-1)
-
-# get id of most recent tweet
-recent_tweets = response.data
-recent_authors = response.includes
-most_recent_tweet = response.data[0]
-logger.debug("Most recent tweet: %s", most_recent_tweet.text)
-
-# get last X tweets authors
-retweeted_authors = []
-if RESTRICT_USERS:
-    for author in recent_authors['users']:
-        retweeted_authors.append(
-            author.username
-        )
-
-logger.debug("retweeted_authors: %s", retweeted_authors)
 
 # get tweets
 results = []
@@ -136,9 +105,6 @@ for tweet in found_tweets:
     elif EXCLUDE_MENTIONS and USERNAME in tweet.text:
         # do nothing if we're excluding mentions and mentioned
         logger.info("Mentioned in tweet - not retweeting")
-    elif RESTRICT_USERS and tweet.author.screen_name in retweeted_authors:
-        # if users has been retweeted recently, ignore
-        logger.info("User retweeted recently - not retweeting")
     elif blacklist_match(tweet.text, BLACKLIST_TERMS):
         # tweet matches blacklisted terms, ignore
         logger.info("Blacklist hit - not retweeting")
@@ -150,7 +116,5 @@ for tweet in found_tweets:
         logger.info("Retweeting")
         try:
             client.retweet(tweet.id)
-            retweeted_authors.append(tweet.author.screen_name)
-            time.sleep(THROTTLE)
         except tweepy.errors.TweepyException as e:
             logger.error('Error retweeting: %s', e)
