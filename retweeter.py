@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import configparser
-import time
+import datetime
 import sys
 import logging
 import logging.config
@@ -83,6 +83,7 @@ try:
         tweet_fields=['author_id', 'created_at', 'referenced_tweets', 'text'],
         expansions=['author_id'],
         max_results=100,
+        #start_time=datetime.datetime.now() - datetime.timedelta(hours = 1)
     )
 except tweepy.errors.TweepyException as e:
     logger.error('Error getting searching for tweets: %s', e)
