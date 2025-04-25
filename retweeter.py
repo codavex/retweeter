@@ -22,7 +22,7 @@ def blacklist_match(text, blacklist):
 
 def already_retweeted(tweet_id, my_id):
     try:
-        retweets_response = client.get_retweeters(id = tweet_id)
+        retweets_response = client.get_retweeters(id=tweet_id)
     except tweepy.errors.TweepyException as e:
         logger.error('Error looking up %s, %s', USERNAME, e)
         sys.exit(-1)
@@ -80,7 +80,7 @@ try:
     results = client.search_recent_tweets(
         query=f"\"{SEARCH_TERM}\"",
         user_fields=['username'],
-        tweet_fields=['author_id','created_at', 'referenced_tweets', 'text'],
+        tweet_fields=['author_id', 'created_at', 'referenced_tweets', 'text'],
         expansions=['author_id'],
         max_results=100,
     )
@@ -109,7 +109,7 @@ for tweet in found_tweets:
         # tweet matches blacklisted terms, ignore
         logger.info("Blacklist hit - not retweeting")
     elif tweet.referenced_tweets and \
-        already_retweeted(tweet.referenced_tweets[0].id, my_id):
+            already_retweeted(tweet.referenced_tweets[0].id, my_id):
         # if I've already retweeted, ignore
         logger.info("Already retweeted - not retweeting")
     else:
