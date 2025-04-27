@@ -54,6 +54,7 @@ USERNAME = Config.get("Settings", "USERNAME")
 EXCLUDE_MENTIONS = Config.getboolean("Settings", "EXCLUDE_MENTIONS")
 TRIAL_RUN = Config.getboolean("Settings", "TRIAL_RUN")
 LOG_CONFIG = Config.get("Settings", "LOG_CONFIG")
+SEARCH_WINDOW = Config.getint("Settings", "SEARCH_WINDOW")
 
 # set up logging
 logging.config.fileConfig(LOG_CONFIG)
@@ -83,13 +84,17 @@ try:
         tweet_fields=['author_id', 'created_at', 'referenced_tweets', 'text'],
         expansions=['author_id'],
         max_results=100,
-        #start_time=datetime.datetime.now() - datetime.timedelta(hours = 1)
+        start_time=datetime.datetime.now() - datetime.timedelta(hours = SEARCH_WINDOW)
     )
 except tweepy.errors.TweepyException as e:
     logger.error('Error getting searching for tweets: %s', e)
     sys.exit(-1)
 
 logger.info("Found %d tweet(s)", results[3]['result_count'])
+
+if results[0] == None:
+    logger.info("No tweets found - exiting")
+    sys.exit(-1)
 
 found_tweets = reversed(results[0])
 # retweet what we've found.
